@@ -12,10 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,7 +26,7 @@ public class RestApiTest {
     @DisplayName("Valid input string")
     @ParameterizedTest
     @MethodSource("provideStringsForValid")
-    public void testValid(String input, String output) throws IOException {
+    public void testValid(String input, String output)  {
         InputString inputString = new InputString();
         inputString.setInputString(input);
         ResponseEntity<String> responseEntity = this.restTemplate
@@ -41,24 +38,24 @@ public class RestApiTest {
     @DisplayName("Invalid size of input string")
     @ParameterizedTest
     @ValueSource(strings = {"", "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuva"})
-    public void testInvalidSize(String string) throws IOException {
+    public void testInvalidSize(String string) {
         testStatus400(string);
     }
 
     @DisplayName("Invalid pattern of input string")
     @ParameterizedTest
     @ValueSource(strings = {"sS", "/", "!!!", "4995", "()("})
-    public void testInvalidPattern(String string) throws IOException {
+    public void testInvalidPattern(String string) {
         testStatus400(string);
     }
 
     @Test
     @DisplayName("Nullable input")
-    public void testNullableInput() throws IOException {
+    public void testNullableInput() {
         testStatus400(null);
     }
 
-    private void testStatus400(String string) throws IOException {
+    private void testStatus400(String string)  {
         InputString inputString = new InputString();
         inputString.setInputString(string);
         ResponseEntity<String> responseEntity = this.restTemplate
