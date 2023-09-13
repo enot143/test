@@ -6,34 +6,35 @@ import java.util.*;
 
 @Service
 public class MainService {
-    public String getCharsFrequency(String s){
-        int[] charArray = new int[26];
-        for (int i = 0; i < s.length(); i++){
-            charArray[s.charAt(i) - 97]++;
+    public String getCharsFrequency(String s) {
+        Map<Character, Integer> charFrequency = new HashMap<>();
+
+        for (char ch : s.toCharArray()) {
+            charFrequency.putIfAbsent(ch, 0);
+            charFrequency.computeIfPresent(ch, (k, v) -> v + 1);
         }
 
-        List<Map.Entry<Character, Integer>> charFrequency = new ArrayList<>();
-        for (int i = 0; i < charArray.length; i++){
-            if (charArray[i] != 0){
-                charFrequency.add(Map.entry((char) (i + 97), charArray[i]));
-            }
-        }
-
-        charFrequency.sort((o1, o2) -> {
-            int valueCompare = o1.getValue().compareTo(o2.getValue());
+        Comparator<Map.Entry<Character, Integer>> comparator = (o1, o2) -> {
+            int valueCompare = o2.getValue().compareTo(o1.getValue());
             if (valueCompare == 0) {
-                return o2.getKey().compareTo(o1.getKey());
+                return o1.getKey().compareTo(o2.getKey());
             }
             return valueCompare;
-        });
+        };
 
         StringBuilder result = new StringBuilder();
-        for (int i = charFrequency.size() - 1; i >= 0; i--){
-            result.append(charFrequency.get(i).getKey())
-                    .append(":")
-                    .append(charFrequency.get(i).getValue())
-                    .append(",");
-        }
-        return result.deleteCharAt(result.length() - 1).toString();
+
+        charFrequency.entrySet().stream()
+                .sorted(comparator)
+                .forEachOrdered(entry ->
+                        result.append("\"")
+                                .append(entry.getKey())
+                                .append("\"")
+                                .append(":")
+                                .append(entry.getValue())
+                                .append(","));
+
+        result.deleteCharAt(result.length() - 1);
+        return result.toString();
     }
 }
